@@ -34,7 +34,7 @@ defmodule ExometerReportDatadog.Mixfile do
 
      # Seriously annoying having to include this override, but parse_trans &
      # setup appear to depend on 2 different versions of edown.
-     {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.5",
+     {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.7",
       override: true, optional: true}
     ]
   end
