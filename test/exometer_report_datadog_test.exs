@@ -43,7 +43,7 @@ defmodule ExometerReportDatadogTest do
   deffixture reporter(http_client) do
     :exometer_report.add_reporter(
       ExometerReportDatadog,
-      api_key: "ab", app_key: "cd", flush_period: 20,
+      api_key: "ab", app_key: "cd", flush_period: 20, host: "testhost",
       http_client: http_client
     )
 
@@ -79,6 +79,7 @@ defmodule ExometerReportDatadogTest do
     [metric] = data["series"]
     assert metric["metric"] == "test.value"
     assert metric["type"] == "gauge"
+    assert metric["host"] == "testhost"
     assert length(metric["points"]) >= 2
     [[_, x], [_, y] | _] = metric["points"]
     assert x == 10

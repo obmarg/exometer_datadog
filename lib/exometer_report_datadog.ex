@@ -13,6 +13,7 @@ defmodule ExometerReportDatadog do
 
     defstruct [api_key: nil,
                app_key: nil,
+               host: nil,
                flush_period: 10_000,
                datadog_url: "https://app.datadoghq.com/api/v1",
                http_client: HTTPoison,
@@ -20,6 +21,7 @@ defmodule ExometerReportDatadog do
 
     @type t :: %Options{api_key: String.t | nil,
                         app_key: String.t | nil,
+                        host: String.t | nil,
                         flush_period: integer,
                         datadog_url: String.t,
                         http_client: :atom,
@@ -42,12 +44,13 @@ defmodule ExometerReportDatadog do
     # A single metric batch to send to datadog
 
     @derive [Poison.Encoder]
-    defstruct [metric: nil, points: [], type: "gauge"]
+    defstruct [metric: nil, points: [], type: "gauge", host: nil]
 
     @type t :: %Metric{
       metric: String.t,
       points: [{integer, number}],
-      type: String.t
+      type: String.t,
+      host: String.t | nil
     }
   end
 
@@ -81,7 +84,8 @@ defmodule ExometerReportDatadog do
   def exometer_info(:flush, {opts, points}) do
     metrics = for {name, points} <- Enum.group_by(points, &Point.name/1) do
       %Metric{metric: name,
-              points: (for p <- points, do: [p.time, p.value])}
+              points: (for p <- points, do: [p.time, p.value]),
+              host: opts.host}
     end
     send_to_datadog(opts, metrics)
     start_flush_timer(opts)
