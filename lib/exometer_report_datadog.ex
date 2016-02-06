@@ -1,0 +1,2 @@
+defmodule ExometerReportDatadog do
+end
