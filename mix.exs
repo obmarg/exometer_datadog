@@ -14,7 +14,7 @@ defmodule ExometerReportDatadog.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger, :exometer_core]]
   end
 
   # Dependencies can be Hex packages:
@@ -27,6 +27,15 @@ defmodule ExometerReportDatadog.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:exometer_core, github: "PSPDFKit-labs/exometer_core"},
+     {:poison, "~> 2.0.0"},
+
+     {:ex_unit_fixtures, "~> 0.3.0", only: :test},
+
+     # Seriously annoying having to include this override, but parse_trans &
+     # setup appear to depend on 2 different versions of edown.
+     {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.5",
+      override: true, optional: true}
+    ]
   end
 end
