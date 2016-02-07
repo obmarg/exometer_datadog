@@ -22,3 +22,16 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [{:exometer_datadog, "~> 0.0.1"}]
         end
 
+  2. Ensure exometer_datadog is started before your application:
+
+        def application do
+          [applications: [:exometer_datadog]]
+        end
+
+  3. Add your datadog API keys to your configuraton.  Note: you probably want
+     to store these in `prod.secret.exs` or equivalent to avoid checking in to
+     your repository.
+
+        config :exometer_datadog,
+          api_key: 'abcd',
+          app_key: 'defg'

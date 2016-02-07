@@ -92,6 +92,12 @@ defmodule ExometerDatadog.Reporter do
     {:ok, {opts, []}}
   end
 
+  # This function will drop any pending points in the reporter.
+  # Not intended to be used in production, just for tests
+  def exometer_info(:clear, {opts, _points}) do
+    {:ok, {opts, []}}
+  end
+
   def exometer_info(unknown, state) do
     {:ok, state}
   end

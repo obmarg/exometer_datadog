@@ -28,5 +28,9 @@ defmodule TestHttpClient do
   def requests() do
     Agent.get(__MODULE__, fn {_, requests} -> requests end)
   end
+
+  def reset() do
+    Agent.update(__MODULE__, fn _ -> {@ok_resp, []} end)
+  end
 end
 

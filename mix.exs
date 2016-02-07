@@ -14,7 +14,9 @@ defmodule ExometerDatadog.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :exometer_core]]
+    [applications: [:logger, :exometer_core],
+     mod: {ExometerDatadog, []},
+     env: default_config(Mix.env)]
   end
 
   defp deps do
@@ -28,5 +30,10 @@ defmodule ExometerDatadog.Mixfile do
      {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.7",
       override: true, optional: true}
     ]
+  end
+
+  defp default_config(_env) do
+    [add_reporter: true,
+     reporter_config: []]
   end
 end
