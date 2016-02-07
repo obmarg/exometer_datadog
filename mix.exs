@@ -34,6 +34,8 @@ defmodule ExometerDatadog.Mixfile do
 
   defp default_config(_env) do
     [add_reporter: true,
-     reporter_config: []]
+     reporter_config: [],
+     update_frequency: 1000,
+     metric_prefix: nil]
   end
 end
