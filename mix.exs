@@ -1,8 +1,8 @@
-defmodule ExometerReportDatadog.Mixfile do
+defmodule ExometerDatadog.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :exometer_report_datadog,
+    [app: :exometer_datadog,
      version: "0.1.0",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -17,15 +17,6 @@ defmodule ExometerReportDatadog.Mixfile do
     [applications: [:logger, :exometer_core]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
   defp deps do
     [{:exometer_core, github: "PSPDFKit-labs/exometer_core"},
      {:poison, "~> 2.0.0"},

@@ -1,4 +1,4 @@
-defmodule ExometerReportDatadog do
+defmodule ExometerDatadog.Reporter do
   @moduledoc """
   An exometer reporter that reports using the datadog rest api
 
