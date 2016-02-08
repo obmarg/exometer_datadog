@@ -34,3 +34,4 @@ defmodule TestHttpClient do
   end
 end
 
+TestHttpClient.start

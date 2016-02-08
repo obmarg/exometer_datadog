@@ -4,7 +4,7 @@ defmodule ReporterTest do
   alias ExometerDatadog.Reporter
   doctest Reporter
 
-  deffixture http_client(http_client) do
+  deffixture http_client do
     send Reporter, :clear
     TestHttpClient.reset
   end

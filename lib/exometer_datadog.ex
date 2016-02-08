@@ -4,7 +4,7 @@ defmodule ExometerDatadog do
   """
   use Application
 
-  alias ExometerDatadog.Reporter
+  alias ExometerDatadog.{Reporter, SystemMetrics}
 
   require Logger
 
@@ -55,24 +55,28 @@ defmodule ExometerDatadog do
   datadog.
   """
   def add_vm_metrics do
-    update_frequency = get_env(:update_frequency)
     memory_stats = ~w(atom binary ets processes total)a
+    system_stats = ~w(port_count process_count)a
 
-    memory_metric = metric_name([:erlang, :memory])
-    :exometer.new(
-      memory_metric,
-      {:function, :erlang, :memory, [], :proplist, memory_stats}
+    [:erlang, :memory]
+    |> metric_name
+    |> new_metric(
+      {:function, :erlang, :memory, [], :proplist, memory_stats},
+      memory_stats
     )
-    :exometer_report.subscribe(
-      Reporter, memory_metric, memory_stats, update_frequency
+
+    [:erlang, :statistics]
+    |> metric_name
+    |> new_metric(
+      {:function, :erlang, :statistics, [:'$dp'], :value, [:run_queue]},
+      [:run_queue]
     )
-    statistics_metric = metric_name([:erlang, :statistics])
-    :exometer.new(
-      statistics_metric,
-      {:function, :erlang, :statistics, [:'$dp'], :value, [:run_queue]}
-    )
-    :exometer_report.subscribe(
-      Reporter, statistics_metric, :run_queue, update_frequency
+
+    [:erlang, :system_info]
+    |> metric_name
+    |> new_metric(
+      {:function, :erlang, :system_info, [:'$dp'], :value, system_stats},
+      system_stats
     )
   end
 
@@ -80,11 +84,38 @@ defmodule ExometerDatadog do
   Removes the VM metrics added by `add_vm_metrics/0`
   """
   def remove_vm_metrics do
-    for metric <- [[:erlang, :memory], [:erlang, :statistics]] do
-      metric = metric_name(metric)
-      :exometer.delete(metric)
-      :exometer_report.unsubscribe_all Reporter, metric
+    metrics = [[:erlang, :memory],
+               [:erlang, :statistics],
+               [:erlang, :system_info]]
+    for metric <- metrics, do: metric |> metric_name |> delete_metric
+  end
+
+  @moduledoc """
+  This adds system metrics to exometer.
+
+  Currently this uses files located within `/proc` so will only work on linux
+  machines.
+  """
+  def add_system_metrics do
+    unless File.exists?("/proc") do
+      Logger.warn "Can't find `/proc` - system metrics will mostly be useless."
     end
+
+    load_stats = ~w(1 5 15)a
+
+    new_metric(
+      [:system, :load],
+      {:function, SystemMetrics, :loadavg, [], :proplist, load_stats},
+      load_stats
+    )
+  end
+
+  @moduledoc """
+  Removes the system metrics added by `add_system_metrics/0`
+  """
+  def remove_system_metrics do
+    [[:system, :load]]
+    |> Enum.each(&delete_metric/1)
   end
 
   defp get_env(key, default \\ nil) do
@@ -94,5 +125,20 @@ defmodule ExometerDatadog do
   defp metric_name(name) do
     prefix = (get_env(:metric_prefix) || []) |> List.wrap()
     prefix ++ List.wrap(name)
+  end
+
+  # Creates a metric in exometer & subscribes our reporter to it.
+  defp new_metric(metric_name, metric_def, datapoints) do
+    update_frequency = get_env(:update_frequency)
+    :ok = :exometer.new(metric_name, metric_def)
+    :ok = :exometer_report.subscribe(
+      Reporter, metric_name, datapoints, update_frequency
+    )
+  end
+
+  # Deletes a metric & removes it's subscription.
+  defp delete_metric(metric_name) do
+    :exometer.delete(metric_name)
+    :exometer_report.unsubscribe_all Reporter, metric_name
   end
 end
