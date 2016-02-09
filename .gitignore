@@ -1,5 +1,6 @@
-/_build
-/cover
-/deps
+_build/
+cover/
+deps/
 erl_crash.dump
 *.ez
+.vagrant
