@@ -53,7 +53,7 @@ defmodule ExometerDatadog.SystemMetrics do
       {:ok, data} ->
         stats = data |> String.split(~r/\s+/) |> Stream.chunk(3, 3, [])
         for [stat, count, unit] <- stats, Map.has_key?(mem_stats, stat) do
-          {mem_stats[stat], convert_to_bytes(count, unit)}
+          {mem_stats[stat], convert_to_megabytes(count, unit)}
         end
       _ ->
         []
@@ -61,12 +61,12 @@ defmodule ExometerDatadog.SystemMetrics do
   end
 
   # Converts a count into some
-  defp convert_to_bytes(count, unit) when is_binary(count) do
+  defp convert_to_megabytes(count, unit) when is_binary(count) do
     {count, ""} = Integer.parse(count)
-    convert_to_bytes(count, unit)
+    convert_to_megabytes(count, unit)
   end
-  defp convert_to_bytes(count, "B"), do: count
-  defp convert_to_bytes(count, "kB"), do: count * 1024
-  defp convert_to_bytes(count, "mB"), do: count * 1024 * 1024
-  defp convert_to_bytes(count, "gB"), do: count * 1024 * 1024 * 1024
+  defp convert_to_megabytes(count, "B"), do: count / 1024 / 1024
+  defp convert_to_megabytes(count, "kB"), do: count / 1024
+  defp convert_to_megabytes(count, "mB"), do: count
+  defp convert_to_megabytes(count, "gB"), do: count * 1024
 end
