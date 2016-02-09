@@ -8,22 +8,21 @@ defmodule ExometerDatadog do
   situations, by directly submitting exometer statistics to datadog via the REST
   API.
 
-  ExometerDatadog also provides some functionality to make configuring exometer
-  easier, and to submit system & vm metrics along with the application metrics.
+  ### Setup
 
-  ### Usage
+  To pull in ExometerDatadog to your application, you should add it to your
+  dependencies and list of applications in `mix.exs`, and then add an `api_key`
+  and `app_key` to your configuration.  For example:
 
-  ExometerDatadog presents itself as an OTP appliction. On startup, assuming
-  it's configured correctly, it will:
+      config :exometer_datadog,
+         api_key: 'abcd',
+         app_key: 'defg',
 
-  - Register the ExometerDatadog.Reporter with exometer. See
-    `register_reporter/1`.
-  - Optionally create some VM metrics and subscribe them to the datadog
-    reporter.  See `add_vm_metrics/0`.  This is disabled by default.
-  - Optionally create some system metrics and subscribe them to the datadog
-    reporter.  See `add_system_metrics/0`.  This is disabled by default.
+  You may want to put this in `prod.secret.exs` or similar to avoid checking the
+  keys in to your repository.
 
-  These behaviours can be controlled via the application configuration.
+  Now ExometerDatadog should startup along with your app. For details of what it
+  does on startup, see `start/2`.
 
   ### Configuration
 
@@ -51,8 +50,18 @@ defmodule ExometerDatadog do
 
   require Logger
 
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
+  @doc """
+  Starts the ExometerDatadog application.
+
+  This will:
+
+  - Register the ExometerDatadog.Reporter with exometer. See
+  `register_reporter/1`.
+  - Optionally create some VM metrics and subscribe them to the datadog
+  reporter.  See `add_vm_metrics/0`.  This is disabled by default.
+  - Optionally create some system metrics and subscribe them to the datadog
+  reporter.  See `add_system_metrics/0`.  This is disabled by default.
+  """
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
@@ -66,7 +75,7 @@ defmodule ExometerDatadog do
     Supervisor.start_link(children, opts)
   end
 
-  @moduledoc """
+  @doc """
   Registers the datadog reporter with exometer.
 
   This will automatically be done on application startup, but this function is
@@ -91,7 +100,7 @@ defmodule ExometerDatadog do
     :exometer_report.add_reporter(Reporter, reporter_config)
   end
 
-  @moduledoc """
+  @doc """
   Creates some exometer metrics that report the status of the VM.
 
   This will create a number of metrics that report statistics about the VM to
@@ -123,9 +132,9 @@ defmodule ExometerDatadog do
     )
   end
 
-  @moduledoc """
-  Removes the VM metrics added by `add_vm_metrics/0`
-  """
+  @doc false
+  # Removes the VM metrics added by `add_vm_metrics/0`
+  # Mostly for testing
   def remove_vm_metrics do
     metrics = [[:erlang, :memory],
                [:erlang, :statistics],
@@ -133,7 +142,7 @@ defmodule ExometerDatadog do
     for metric <- metrics, do: metric |> metric_name |> delete_metric
   end
 
-  @moduledoc """
+  @doc """
   This adds system metrics to exometer.
 
   Currently this uses files located within `/proc` so will only work on linux
@@ -175,9 +184,9 @@ defmodule ExometerDatadog do
     end
   end
 
-  @moduledoc """
-  Removes the system metrics added by `add_system_metrics/0`
-  """
+  @doc false
+  # Removes the system metrics added by `add_system_metrics/0`
+  # Mostly for testing
   def remove_system_metrics do
     [[:system, :load], [:system, :mem], [:system, :swap]]
     |> Enum.each(&delete_metric/1)

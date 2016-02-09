@@ -1,9 +1,7 @@
 defmodule ExometerDatadog.SystemMetrics do
-  @moduledoc """
-  Contains some functions that provide metrics about the system.
-
-  Only works on linux with access to /proc/loadavg.
-  """
+  @moduledoc false
+  # Contains some functions that provide metrics about the system.
+  # Only works on linux with access to /proc/loadavg.
 
   def loadavg do
     res =

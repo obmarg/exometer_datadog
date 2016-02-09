@@ -7,7 +7,12 @@ defmodule ExometerDatadog.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps,
+
+     name: "ExometerDatadog",
+     source_url: "https://github.com/obmarg/exometer_datadog",
+     homepage_url: "https://github.com/obmarg/exometer_datadog",
+     docs: [main: "ExometerDatadog"]]
   end
 
   # Configuration for the OTP application
@@ -28,7 +33,11 @@ defmodule ExometerDatadog.Mixfile do
      # Seriously annoying having to include this override, but parse_trans &
      # setup appear to depend on 2 different versions of edown.
      {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.7",
-      override: true, optional: true}
+      override: true, optional: true},
+
+     # ExDoc & deps.
+     {:earmark, "~> 0.1", only: :dev},
+     {:ex_doc, "~> 0.11", only: :dev}
     ]
   end
 

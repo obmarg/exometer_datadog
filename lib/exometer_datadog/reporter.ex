@@ -77,8 +77,9 @@ defmodule ExometerDatadog.Reporter do
     }
   end
 
-  @type state :: {Options.t, [Point.t]}
+  @typep state :: {Options.t, [Point.t]}
 
+  @doc false
   @spec exometer_init(Keyword.t) :: {:ok, state}
   def exometer_init(opts) do
     opts = struct(Options, opts)
@@ -95,6 +96,7 @@ defmodule ExometerDatadog.Reporter do
     {:ok, {opts, []}}
   end
 
+  @doc false
   @spec exometer_report([:atom], :atom, any, any, State.t) :: {:ok, State.t}
   def exometer_report(metric, datapoint, extra, value, {opts, points}) do
     name =
@@ -108,6 +110,7 @@ defmodule ExometerDatadog.Reporter do
     {:ok, {opts, [%Point{name: name, value: value, time: time} | points]}}
   end
 
+  @doc false
   def exometer_info(:flush, {opts, points}) do
     metrics = for {name, points} <- Enum.group_by(points, &Point.name/1) do
       %Metric{metric: name,
@@ -129,30 +132,37 @@ defmodule ExometerDatadog.Reporter do
     {:ok, state}
   end
 
+  @doc false
   def exometer_subscribe(metric, datapoint, extra, interval, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_unsubscribe(metric, datapoint, extra, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_call(unknown, from, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_cast(unknown, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_newentry(entry, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_setopts(metric, options, status, state) do
     {:ok, state}
   end
 
+  @doc false
   def exometer_terminate(_, _) do
     :ignore
   end

@@ -9,8 +9,13 @@ that is not ideal (or even possible). This library aims to cover those
 situations, by directly submitting exometer statistics to datadog via the REST
 API.
 
-It also provides some functionality to make configuring exometer and submitting
-common metrics to datadog easier.
+## Features
+
+- Contains an exometer reporter that reports to the datadog API.
+- Automatically registers the reporter with exometer.
+- Can automatically add VM monitoring stats to exometer.
+- Can automatically add limited system monitoring stats that mimic the metrics
+  gathered dogstatsd
 
 ## Installation
 
@@ -18,23 +23,29 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
   1. Add exometer_datadog to your list of dependencies in `mix.exs`:
 
-        def deps do
-          [{:exometer_datadog, github: "obmarg/exometer_datadog"}]
-        end
+     ```elixir
+      def deps do
+        [{:exometer_datadog, github: "obmarg/exometer_datadog"}]
+      end
+     ```
 
   2. Ensure exometer_datadog is started before your application:
 
-        def application do
-          [applications: [:exometer_datadog]]
-        end
+      ```elixir
+      def application do
+        [applications: [:exometer_datadog]]
+      end
+      ```
 
   3. Add your datadog API keys to your configuraton.  Note: you probably want
      to store these in `prod.secret.exs` or equivalent to avoid checking in to
      your repository.
 
+     ```elixir
         config :exometer_datadog,
           api_key: 'abcd',
-          app_key: 'defg'
+          app_key: 'defg',
+     ```
 
   4. You might optionally want to configure some of the other exometer_datadog
      settings. For more details, see the documentation.
