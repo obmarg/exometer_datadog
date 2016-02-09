@@ -5,7 +5,7 @@ the REST API.
 
 It's already possible to use the existing `exometer_report_statsd` reporter to
 feed data in to the dogstatsd agent. However, there are some situations where
-that is not ideal (or even possible). This plugin aims to cover those
+that is not ideal (or even possible). This library aims to cover those
 situations, by directly submitting exometer statistics to datadog via the REST
 API.
 
@@ -35,3 +35,6 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
         config :exometer_datadog,
           api_key: 'abcd',
           app_key: 'defg'
+
+  4. You might optionally want to configure some of the other exometer_datadog
+     settings. For more details, see the documentation.

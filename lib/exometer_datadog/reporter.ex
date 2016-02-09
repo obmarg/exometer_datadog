@@ -1,7 +1,30 @@
 defmodule ExometerDatadog.Reporter do
   @moduledoc """
-  An exometer reporter that reports using the datadog rest api
+  An exometer reporter that reports metrics using the datadog rest api.
 
+  ### Usage
+
+  ExometerDatadog will automatically register this reporter with exometer on
+  startup, provided the :add_reporter config setting is true. You can also call
+  `ExometerDatadog.register_reporter/1` yourself to do this.
+
+  However, `ExometerDatadog.Reporter` is just a normal exometer reporter plugin,
+  so you can also register it yourself using the exometer config or
+  `:exometer_report.add_reporter/2` if you want.
+
+  ### Options
+
+  ExometerDatadog.Reporter accepts the following options:
+
+  - `api_key` is the API key to send metrics with.
+  - `app_key` is the app key to send metrics with.
+  - `host` is the host to pass to datadog.
+  - `flush_period` is the number of MS we will wait between sending metrics to
+    datadog. Any metrics reported in this time will be stored and sent at the
+    same time.
+
+  Many of these are also in the application config. ExometerDatadog will take
+  care of passing them to the Reporter when it creates it.
   """
   @behaviour :exometer_report
 

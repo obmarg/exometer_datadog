@@ -1,9 +1,10 @@
 defmodule ExometerDatadog.SystemMetrics do
   @moduledoc """
-  Gets the load averages of the system.
+  Contains some functions that provide metrics about the system.
 
   Only works on linux with access to /proc/loadavg.
   """
+
   def loadavg do
     res =
       with {:ok, data} <- read_file("/proc/loadavg"),

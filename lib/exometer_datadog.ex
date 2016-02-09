@@ -1,6 +1,49 @@
 defmodule ExometerDatadog do
   @moduledoc """
-  An elixir library that integrates exometer & datadog.
+  A library that integrates exometer with datadog via the datadog REST API.
+
+  It's already possible to use the existing `exometer_report_statsd` reporter to
+  feed data in to the dogstatsd agent. However, there are some situations where
+  that is not ideal (or even possible). This library aims to cover those
+  situations, by directly submitting exometer statistics to datadog via the REST
+  API.
+
+  ExometerDatadog also provides some functionality to make configuring exometer
+  easier, and to submit system & vm metrics along with the application metrics.
+
+  ### Usage
+
+  ExometerDatadog presents itself as an OTP appliction. On startup, assuming
+  it's configured correctly, it will:
+
+  - Register the ExometerDatadog.Reporter with exometer. See
+    `register_reporter/1`.
+  - Optionally create some VM metrics and subscribe them to the datadog
+    reporter.  See `add_vm_metrics/0`.  This is disabled by default.
+  - Optionally create some system metrics and subscribe them to the datadog
+    reporter.  See `add_system_metrics/0`.  This is disabled by default.
+
+  These behaviours can be controlled via the application configuration.
+
+  ### Configuration
+
+  ExometerDatadog gets it's configuration from the mix config files. It has
+  these config settings:
+
+  - `api_key` is the datadog API key to send metrics with.
+  - `app_key` is the datadog app key to send metrics with.
+  - `host` is the hostname to report to datadog.
+  - `add_reporter` controls whether ExometerDatadog.Reporter will be registered
+    on application startup. By default this is true.
+  - `report_vm_metrics` controls whether VM metrics will be reported to datadog.
+  - `update_frequency` controls the frequency with which VM metrics will be
+    updated.
+  - `report_system_metrics` controls whether VM metrics will be reported to
+    datadog.
+  - `metric_prefix` can be provided as a list of atoms to prefix the VM metric names
+    with.
+  - `reporter_config` can be used to provide config to the reporter. See
+    `ExometerDatadog.Reporter` for more details on it's configuration.
   """
   use Application
 
