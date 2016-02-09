@@ -13,9 +13,9 @@ defmodule ExometerDatadog do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    if Application.get_env(:exometer_datadog, :add_reporter) do
-      register_reporter
-    end
+    if get_env(:add_reporter), do: register_reporter
+    if get_env(:report_system_metrics), do: add_system_metrics
+    if get_env(:report_vm_metrics), do: add_vm_metrics
 
     children = []
 
