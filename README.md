@@ -19,7 +19,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   1. Add exometer_datadog to your list of dependencies in `mix.exs`:
 
         def deps do
-          [{:exometer_datadog, "~> 0.0.1"}]
+          [{:exometer_datadog, github: "obmarg/exometer_datadog"}]
         end
 
   2. Ensure exometer_datadog is started before your application:
