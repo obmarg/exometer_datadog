@@ -109,7 +109,7 @@ defmodule ExometerDatadog do
       5000
     )
 
-    memory_stats = ~w(total free buffered cached)a
+    memory_stats = SystemMetrics.meminfo |> Keyword.keys
     new_metric(
       [:system, :mem],
       {:function, SystemMetrics, :meminfo, [], :proplist, memory_stats},
@@ -117,7 +117,7 @@ defmodule ExometerDatadog do
       5000
     )
 
-    swap_stats = ~w(free total used)a
+    swap_stats = SystemMetrics.swapinfo |> Keyword.keys
     new_metric(
       [:system, :swap],
       {:function, SystemMetrics, :swapinfo, [], :proplist, swap_stats},

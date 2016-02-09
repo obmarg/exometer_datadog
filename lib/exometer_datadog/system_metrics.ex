@@ -17,12 +17,19 @@ defmodule ExometerDatadog.SystemMetrics do
   end
 
   def meminfo do
-    read_meminfo %{
+    rv = read_meminfo %{
       "MemTotal:" => :total,
       "MemFree:" => :free,
       "Buffers:" => :buffered,
       "Cached:" => :cached,
+      "Shmem:" => :shared,
+      "MemAvailable:" => :usable
     }
+    if rv[:free] && rv[:total] do
+      [{:used, rv[:total] - rv[:free]} | rv]
+    else
+      rv
+    end
   end
 
   def swapinfo do

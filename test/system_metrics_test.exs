@@ -47,7 +47,7 @@ defmodule SystemMetricsTest do
   test "calling meminfo directly" do
     if File.exists?("/proc/meminfo") do
       keys = SystemMetrics.meminfo |> Keyword.keys
-      assert keys == ~w(total free buffered cached)a
+      assert keys == ~w(used total free buffered cached shared)a
     else
       assert SystemMetrics.meminfo == []
     end
