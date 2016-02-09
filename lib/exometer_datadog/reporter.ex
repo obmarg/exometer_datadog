@@ -64,6 +64,10 @@ defmodule ExometerDatadog.Reporter do
       raise "Can't start DatadogReporter with missing api_key & app_key."
     end
 
+    # Get the host from application options if we don't have one already.
+    host = opts.host || Application.get_env(:exometer_datadog, :host)
+    opts = %{opts | host: host}
+
     start_flush_timer(opts)
     {:ok, {opts, []}}
   end
