@@ -106,7 +106,17 @@ defmodule ExometerDatadog do
     new_metric(
       [:system, :load],
       {:function, SystemMetrics, :loadavg, [], :proplist, load_stats},
-      load_stats
+      load_stats,
+      5000
+    )
+
+    memory_stats = ~w(total free buffered cached)a
+
+    new_metric(
+      [:system, :mem],
+      {:function, SystemMetrics, :meminfo, [], :proplist, memory_stats},
+      memory_stats,
+      5000
     )
   end
 
@@ -114,7 +124,7 @@ defmodule ExometerDatadog do
   Removes the system metrics added by `add_system_metrics/0`
   """
   def remove_system_metrics do
-    [[:system, :load]]
+    [[:system, :load], [:system, :mem]]
     |> Enum.each(&delete_metric/1)
   end
 
@@ -128,11 +138,11 @@ defmodule ExometerDatadog do
   end
 
   # Creates a metric in exometer & subscribes our reporter to it.
-  defp new_metric(metric_name, metric_def, datapoints) do
-    update_frequency = get_env(:update_frequency)
+  defp new_metric(metric_name, metric_def, datapoints, update_freq \\ nil) do
+    update_freq = update_freq || get_env(:update_frequency)
     :ok = :exometer.new(metric_name, metric_def)
     :ok = :exometer_report.subscribe(
-      Reporter, metric_name, datapoints, update_frequency
+      Reporter, metric_name, datapoints, update_freq
     )
   end
 
