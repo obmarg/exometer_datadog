@@ -25,6 +25,18 @@ defmodule ExometerDatadog.SystemMetrics do
     }
   end
 
+  def swapinfo do
+    rv = read_meminfo %{
+      "SwapFree:" => :free,
+      "SwapTotal:" => :total
+    }
+    if rv[:free] && rv[:total] do
+      [{:used, rv[:total] - rv[:free]} | rv]
+    else
+      rv
+    end
+  end
+
   # We can't use File.read because it doesn't work with /proc files. (Mostly
   # becaues it calls stat on them, sees they have 0 size and returns that
   # accordingly)

@@ -102,7 +102,6 @@ defmodule ExometerDatadog do
     end
 
     load_stats = ~w(1 5 15)a
-
     new_metric(
       [:system, :load],
       {:function, SystemMetrics, :loadavg, [], :proplist, load_stats},
@@ -111,11 +110,18 @@ defmodule ExometerDatadog do
     )
 
     memory_stats = ~w(total free buffered cached)a
-
     new_metric(
       [:system, :mem],
       {:function, SystemMetrics, :meminfo, [], :proplist, memory_stats},
       memory_stats,
+      5000
+    )
+
+    swap_stats = ~w(free total used)a
+    new_metric(
+      [:system, :swap],
+      {:function, SystemMetrics, :swapinfo, [], :proplist, swap_stats},
+      swap_stats,
       5000
     )
   end
@@ -124,7 +130,7 @@ defmodule ExometerDatadog do
   Removes the system metrics added by `add_system_metrics/0`
   """
   def remove_system_metrics do
-    [[:system, :load], [:system, :mem]]
+    [[:system, :load], [:system, :mem], [:system, :swap]]
     |> Enum.each(&delete_metric/1)
   end
 

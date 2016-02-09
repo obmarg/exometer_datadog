@@ -10,7 +10,7 @@ defmodule SystemMetricsTest do
     on_exit fn -> ExometerDatadog.remove_system_metrics end
   end
 
-  @expected_metrics [[:system, :load], [:system, :mem]]
+  @expected_metrics [[:system, :load], [:system, :mem], [:system, :swap]]
 
   test "can get values of system metrics" do
     for metric <- @expected_metrics do
@@ -48,6 +48,15 @@ defmodule SystemMetricsTest do
     if File.exists?("/proc/meminfo") do
       keys = SystemMetrics.meminfo |> Keyword.keys
       assert keys == ~w(total free buffered cached)a
+    else
+      assert SystemMetrics.meminfo == []
+    end
+  end
+
+  test "calling swapinfo directly" do
+    if File.exists?("/proc/meminfo") do
+      keys = SystemMetrics.swapinfo |> Keyword.keys
+      assert keys == ~w(used total free)a
     else
       assert SystemMetrics.meminfo == []
     end
