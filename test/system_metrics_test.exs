@@ -13,8 +13,10 @@ defmodule SystemMetricsTest do
   @expected_metrics [[:system, :load], [:system, :mem], [:system, :swap]]
 
   test "can get values of system metrics" do
-    for metric <- @expected_metrics do
-      {:ok, _} = :exometer.get_value(metric)
+    if File.exists?("/proc") do
+      for metric <- @expected_metrics do
+        {:ok, _} = :exometer.get_value(metric)
+      end
     end
   end
 

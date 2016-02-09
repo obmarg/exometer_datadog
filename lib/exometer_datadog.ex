@@ -101,29 +101,35 @@ defmodule ExometerDatadog do
       Logger.warn "Can't find `/proc` - system metrics will mostly be useless."
     end
 
-    load_stats = ~w(1 5 15)a
-    new_metric(
-      [:system, :load],
-      {:function, SystemMetrics, :loadavg, [], :proplist, load_stats},
-      load_stats,
-      5000
-    )
+    load_stats = SystemMetrics.loadavg |> Keyword.keys
+    unless Enum.empty?(load_stats) do
+      new_metric(
+        [:system, :load],
+        {:function, SystemMetrics, :loadavg, [], :proplist, load_stats},
+        load_stats,
+        5000
+      )
+    end
 
     memory_stats = SystemMetrics.meminfo |> Keyword.keys
-    new_metric(
-      [:system, :mem],
-      {:function, SystemMetrics, :meminfo, [], :proplist, memory_stats},
-      memory_stats,
-      5000
-    )
+    unless Enum.empty?(memory_stats) do
+      new_metric(
+        [:system, :mem],
+        {:function, SystemMetrics, :meminfo, [], :proplist, memory_stats},
+        memory_stats,
+        5000
+      )
+    end
 
     swap_stats = SystemMetrics.swapinfo |> Keyword.keys
-    new_metric(
-      [:system, :swap],
-      {:function, SystemMetrics, :swapinfo, [], :proplist, swap_stats},
-      swap_stats,
-      5000
-    )
+    unless Enum.empty?(swap_stats) do
+      new_metric(
+        [:system, :swap],
+        {:function, SystemMetrics, :swapinfo, [], :proplist, swap_stats},
+        swap_stats,
+        5000
+      )
+    end
   end
 
   @moduledoc """
