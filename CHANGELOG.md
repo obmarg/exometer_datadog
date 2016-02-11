@@ -1,3 +1,10 @@
+### v0.3.0 (11/2/16)
+
+- Library is now a lot more forgiving on startup if config keys are missing.
+  It just doesn't start things, rather than trying to and crashing.
+- The "host" setting now defaults to the current hostname, and can be
+  overridden using functions as well as hard coding a name.
+
 ### v0.2.0 (9/2/16)
 
 - Expanded the library to include more than just a reporter.
