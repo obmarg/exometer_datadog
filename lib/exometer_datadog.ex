@@ -31,7 +31,10 @@ defmodule ExometerDatadog do
 
   - `api_key` is the datadog API key to send metrics with.
   - `app_key` is the datadog app key to send metrics with.
-  - `host` is the hostname to report to datadog.
+  - `host_fn` is a `{module, function}` tuple that specifies a function to be
+    called to determine the hostname to report to datadog. Defaults to
+    `:inet.gethostname`
+  - `host` can be used instead of `host_fn` to hard-code the hostname.
   - `add_reporter` controls whether ExometerDatadog.Reporter will be registered
     on application startup. By default this is true.
   - `report_vm_metrics` controls whether VM metrics will be reported to datadog.
@@ -112,7 +115,7 @@ defmodule ExometerDatadog do
                        app_key: get_env(:app_key))
       |> Keyword.merge(opts)
 
-    :exometer_report.add_reporter(Reporter, reporter_config)
+    :ok = :exometer_report.add_reporter(Reporter, reporter_config)
   end
 
   @doc """

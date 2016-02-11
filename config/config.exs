@@ -6,11 +6,5 @@ use Mix.Config
 config :lager, error_logger_redirect: false
 
 if Mix.env == :test do
-  config :exometer_datadog, [
-    api_key: "ab",
-    app_key: "cd",
-    reporter_config: [flush_period: 20,
-                      host: "testhost",
-                      http_client: TestHttpClient]
-  ]
+  config :exometer_datadog, add_reporter: :false
 end

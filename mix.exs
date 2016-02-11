@@ -47,6 +47,7 @@ defmodule ExometerDatadog.Mixfile do
      update_frequency: 1000,
      metric_prefix: nil,
      report_system_metrics: false,
-     report_vm_metrics: false]
+     report_vm_metrics: false,
+     host_fn: {:inet, :gethostname}]
   end
 end
