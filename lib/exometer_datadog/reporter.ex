@@ -18,7 +18,10 @@ defmodule ExometerDatadog.Reporter do
 
   - `api_key` is the API key to send metrics with.
   - `app_key` is the app key to send metrics with.
-  - `host` is the host to pass to datadog.
+  - `host_fn` is a {module, function} tuple that will be called to determine the
+    current hostname to pass to datadog.  Should return an {:ok, hostname} tuple.
+  - `host` is the host to pass to datadog, this can be used to override
+    `host_fn`
   - `flush_period` is the number of MS we will wait between sending metrics to
     datadog. Any metrics reported in this time will be stored and sent at the
     same time.
@@ -37,6 +40,7 @@ defmodule ExometerDatadog.Reporter do
     defstruct [api_key: nil,
                app_key: nil,
                host: nil,
+               host_fn: nil,
                flush_period: 10_000,
                datadog_url: "https://app.datadoghq.com/api/v1",
                http_client: HTTPoison,
@@ -45,6 +49,7 @@ defmodule ExometerDatadog.Reporter do
     @type t :: %Options{api_key: String.t | nil,
                         app_key: String.t | nil,
                         host: String.t | nil,
+                        host_fn: {:atom, :atom} | nil,
                         flush_period: integer,
                         datadog_url: String.t,
                         http_client: :atom,
@@ -88,8 +93,17 @@ defmodule ExometerDatadog.Reporter do
       raise "Can't start DatadogReporter with missing api_key & app_key."
     end
 
-    # Get the host from application options if we don't have one already.
-    host = opts.host || Application.get_env(:exometer_datadog, :host)
+    {host_fn_mod, host_fn_fun} =
+      opts.host_fn || Application.get_env(:exometer_datadog, :host_fn)
+
+    host = cond do
+      opts.host -> opts.host
+      host = Application.get_env(:exometer_datadog, :host) -> host
+      true ->
+        {:ok, host} = :erlang.apply(host_fn_mod, host_fn_fun, [])
+        host
+    end
+
     opts = %{opts | host: host}
 
     start_flush_timer(opts)
@@ -119,12 +133,6 @@ defmodule ExometerDatadog.Reporter do
     end
     send_to_datadog(opts, metrics)
     start_flush_timer(opts)
-    {:ok, {opts, []}}
-  end
-
-  # This function will drop any pending points in the reporter.
-  # Not intended to be used in production, just for tests
-  def exometer_info(:clear, {opts, _points}) do
     {:ok, {opts, []}}
   end
 

@@ -1,10 +1,10 @@
 defmodule VmMetricsTest do
   use ExUnitFixtures
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias ExometerDatadog.Reporter
 
-  deffixture vm_metrics, autouse: true do
+  deffixture vm_metrics(reporter), autouse: true do
     ExometerDatadog.add_vm_metrics
 
     on_exit fn -> ExometerDatadog.remove_vm_metrics end

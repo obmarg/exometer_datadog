@@ -1,10 +1,10 @@
 defmodule SystemMetricsTest do
   use ExUnitFixtures
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   alias ExometerDatadog.{Reporter, SystemMetrics}
 
-  deffixture system_metrics, autouse: true do
+  deffixture system_metrics(reporter), autouse: true do
     ExometerDatadog.add_system_metrics
 
     on_exit fn -> ExometerDatadog.remove_system_metrics end
