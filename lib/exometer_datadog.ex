@@ -65,9 +65,24 @@ defmodule ExometerDatadog do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    if get_env(:add_reporter), do: register_reporter
-    if get_env(:report_system_metrics), do: add_system_metrics
-    if get_env(:report_vm_metrics), do: add_vm_metrics
+    have_api_key = get_env(:api_key) != nil
+    reporter = get_env(:add_reporter)
+    if reporter and not have_api_key do
+      Logger.warn("ExometerDatadog.Reporter is configured without API key.")
+      Logger.warn("The reporter will be disabled.")
+    end
+    reporter = reporter and have_api_key
+
+    if reporter do
+      register_reporter
+    else
+      if get_env(:report_system_metrics) or get_env(:report_vm_metrics) do
+        Logger.warn("Datadog reporter is disabled.")
+        Logger.warn("System & VM metrics will also be disabled.")
+      end
+    end
+    if reporter and get_env(:report_system_metrics), do: add_system_metrics
+    if reporter and get_env(:report_vm_metrics), do: add_vm_metrics
 
     children = []
 
