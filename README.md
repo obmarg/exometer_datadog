@@ -39,13 +39,14 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
   3. Add your datadog API keys to your configuraton.  Note: you probably want
      to store these in `prod.secret.exs` or equivalent to avoid checking in to
-     your repository.
+     your repository.  See the docs for more configuration options.
 
      ```elixir
         config :exometer_datadog,
           api_key: 'abcd',
-          app_key: 'defg',
+          app_key: 'defg'
      ```
+     
 
   4. You might optionally want to configure some of the other exometer_datadog
      settings. For more details, see the documentation.

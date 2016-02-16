@@ -16,7 +16,7 @@ defmodule ExometerDatadog do
 
       config :exometer_datadog,
          api_key: 'abcd',
-         app_key: 'defg',
+         app_key: 'defg'
 
   You may want to put this in `prod.secret.exs` or similar to avoid checking the
   keys in to your repository.
@@ -46,6 +46,22 @@ defmodule ExometerDatadog do
     with.
   - `reporter_config` can be used to provide config to the reporter. See
     `ExometerDatadog.Reporter` for more details on it's configuration.
+
+  #### Loading Config from environment variables.
+
+  In some cases it might be desirable to load some of the above settings (the
+  `api_key` for example) from environment variables. ExometerDatadog supports
+  this. Simply set your mix config value to `{:system, "ENV_VAR"}` (where
+  "ENV_VAR" is your environment variable name), and ExometerDatadog will read
+  from the environment on startup.
+
+  For example, this would cause the api key & app key to be loaded from
+  DATADOG_API_KEY & DATADOG_APP_KEY:
+
+      config :exometer_datadog,
+        api_key: {:system, "DATADOG_API_KEY"},
+        app_key: {:system, "DATADOG_APP_KEY"}
+
   """
   use Application
 
@@ -114,6 +130,7 @@ defmodule ExometerDatadog do
       |> Keyword.merge(api_key: get_env(:api_key),
                        app_key: get_env(:app_key))
       |> Keyword.merge(opts)
+      |> Enum.map(fn {k, v} -> {k, extract_env_vars(v)} end)
 
     :ok = :exometer_report.add_reporter(Reporter, reporter_config)
   end
@@ -233,4 +250,13 @@ defmodule ExometerDatadog do
     :exometer.delete(metric_name)
     :exometer_report.unsubscribe_all Reporter, metric_name
   end
+
+  defp extract_env_vars({:system, var_name}) when is_list(var_name) do
+    extract_env_vars({:system, var_name |> List.to_string})
+  end
+  defp extract_env_vars({:system, var_name}) when is_binary(var_name) do
+    System.get_env(var_name)
+  end
+  defp extract_env_vars(var), do: var
+
 end
