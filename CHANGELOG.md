@@ -1,3 +1,7 @@
+### v0.4.0 (16/2/16)
+
+- Added support for loading config from environment variables.
+
 ### v0.3.0 (11/2/16)
 
 - Library is now a lot more forgiving on startup if config keys are missing.
