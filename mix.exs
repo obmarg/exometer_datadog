@@ -19,7 +19,7 @@ defmodule ExometerDatadog.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :exometer_core],
+    [applications: [:logger, :exometer_core, :httpoison],
      mod: {ExometerDatadog, []},
      env: default_config(Mix.env)]
   end
@@ -27,6 +27,7 @@ defmodule ExometerDatadog.Mixfile do
   defp deps do
     [{:exometer_core, github: "PSPDFKit-labs/exometer_core"},
      {:poison, "~> 2.0.0"},
+     {:httpoison, "~> 0.8.0", optional: true},
 
      {:ex_unit_fixtures, "~> 0.3.0", only: :test},
 
