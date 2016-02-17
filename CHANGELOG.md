@@ -1,3 +1,8 @@
+### v0.4.1 (17/2/16)
+
+- Added httpoison to the applications list, to ensure it's started before we
+  are.
+
 ### v0.4.0 (16/2/16)
 
 - Added support for loading config from environment variables.
