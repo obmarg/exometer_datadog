@@ -19,13 +19,11 @@ API.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
   1. Add exometer_datadog to your list of dependencies in `mix.exs`:
 
      ```elixir
       def deps do
-        [{:exometer_datadog, github: "obmarg/exometer_datadog"}]
+        [{:exometer_datadog, "~> 0.4.0"}]
       end
      ```
 
@@ -46,7 +44,6 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           api_key: 'abcd',
           app_key: 'defg'
      ```
-     
 
   4. You might optionally want to configure some of the other exometer_datadog
      settings. For more details, see the documentation.

@@ -1,11 +1,11 @@
 defmodule ExometerDatadog do
   @moduledoc """
-  A library that integrates exometer with datadog via the datadog REST API.
+  ExometerDatadog integrates exometer with datadog via the datadog REST API.
 
   It's already possible to use the existing `exometer_report_statsd` reporter to
   feed data in to the dogstatsd agent. However, there are some situations where
   that is not ideal (or even possible). This library aims to cover those
-  situations, by directly submitting exometer statistics to datadog via the REST
+  situations by directly submitting exometer statistics to datadog via the REST
   API.
 
   ### Setup

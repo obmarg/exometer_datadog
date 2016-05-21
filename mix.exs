@@ -2,17 +2,22 @@ defmodule ExometerDatadog.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :exometer_datadog,
-     version: "0.4.1",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps,
+    [
+      app: :exometer_datadog,
+      version: "0.4.2",
+      elixir: "~> 1.2",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps,
 
-     name: "ExometerDatadog",
-     source_url: "https://github.com/obmarg/exometer_datadog",
-     homepage_url: "https://github.com/obmarg/exometer_datadog",
-     docs: [main: "ExometerDatadog"]]
+      name: "ExometerDatadog",
+      source_url: "https://github.com/obmarg/exometer_datadog",
+      homepage_url: "https://github.com/obmarg/exometer_datadog",
+      docs: [main: "ExometerDatadog"],
+
+      description: description,
+      package: package
+    ]
   end
 
   # Configuration for the OTP application
@@ -50,5 +55,19 @@ defmodule ExometerDatadog.Mixfile do
      report_system_metrics: false,
      report_vm_metrics: false,
      host_fn: {:inet, :gethostname}]
+  end
+
+  defp description do
+    """
+    Integrates exometer with datadog via the datadog REST API.
+    """
+  end
+
+  defp package do
+    [
+      maintainers: ["Graeme Coupar"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/obmarg/exometer_datadog"}
+    ]
   end
 end

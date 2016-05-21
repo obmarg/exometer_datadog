@@ -1,3 +1,9 @@
+### v0.4.2 (21/5/16)
+
+- Fix an issue where we'd assume that the API_KEY environment variable would be
+  set, causing ExometerDatadog (and therefore any application that uses it) to
+  crash if the env vars were not set.
+
 ### v0.4.1 (17/2/16)
 
 - Added httpoison to the applications list, to ensure it's started before we
