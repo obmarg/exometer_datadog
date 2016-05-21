@@ -84,7 +84,7 @@ defmodule ExometerDatadog do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    have_api_key = get_env(:api_key) != nil
+    have_api_key = reporter_config[:api_key] != nil
     reporter = get_env(:add_reporter)
     if reporter and not have_api_key do
       Logger.warn("ExometerDatadog.Reporter is configured without API key.")
@@ -124,15 +124,7 @@ defmodule ExometerDatadog do
   * `app_key` - The datadog app specific API key to use.
   """
   def register_reporter(opts \\ []) do
-    reporter_config =
-      :reporter_config
-      |> get_env([])
-      |> Keyword.merge(api_key: get_env(:api_key),
-                       app_key: get_env(:app_key))
-      |> Keyword.merge(opts)
-      |> Enum.map(fn {k, v} -> {k, extract_env_vars(v)} end)
-
-    :ok = :exometer_report.add_reporter(Reporter, reporter_config)
+    :ok = :exometer_report.add_reporter(Reporter, reporter_config(opts))
   end
 
   @doc """
@@ -259,4 +251,12 @@ defmodule ExometerDatadog do
   end
   defp extract_env_vars(var), do: var
 
+  defp reporter_config(opts \\ []) do
+    :reporter_config
+    |> get_env([])
+    |> Keyword.merge(api_key: get_env(:api_key),
+                     app_key: get_env(:app_key))
+    |> Keyword.merge(opts)
+    |> Enum.map(fn {k, v} -> {k, extract_env_vars(v)} end)
+  end
 end
