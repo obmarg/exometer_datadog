@@ -30,16 +30,11 @@ defmodule ExometerDatadog.Mixfile do
   end
 
   defp deps do
-    [{:exometer_core, github: "PSPDFKit-labs/exometer_core"},
+    [{:exometer_core, "~> 1.4.0"},
      {:poison, "~> 2.0.0"},
      {:httpoison, "~> 0.8.0", optional: true},
 
      {:ex_unit_fixtures, "~> 0.3.0", only: :test},
-
-     # Seriously annoying having to include this override, but parse_trans &
-     # setup appear to depend on 2 different versions of edown.
-     {:edown, git: "git://github.com/uwiger/edown.git", tag: "0.7",
-      override: true, optional: true},
 
      # ExDoc & deps.
      {:earmark, "~> 0.1", only: :dev},
