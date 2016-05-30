@@ -1,3 +1,8 @@
+### v0.4.3 (30/5/16)
+
+- Updated deps. Now pulling exometer_core from hex instead of using the
+  pspdfkit fork from github.
+
 ### v0.4.2 (21/5/16)
 
 - Fix an issue where we'd assume that the API_KEY environment variable would be
