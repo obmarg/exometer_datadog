@@ -112,7 +112,7 @@ defmodule ExometerDatadog.Reporter do
 
   @doc false
   @spec exometer_report([:atom], :atom, any, any, State.t) :: {:ok, State.t}
-  def exometer_report(metric, datapoint, extra, value, {opts, points}) do
+  def exometer_report(metric, datapoint, _extra, value, {opts, points}) do
     name =
       metric
       |> List.insert_at(-1, datapoint)
@@ -136,37 +136,37 @@ defmodule ExometerDatadog.Reporter do
     {:ok, {opts, []}}
   end
 
-  def exometer_info(unknown, state) do
+  def exometer_info(_unknown, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_subscribe(metric, datapoint, extra, interval, state) do
+  def exometer_subscribe(_metric, _datapoint, _extra, _interval, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_unsubscribe(metric, datapoint, extra, state) do
+  def exometer_unsubscribe(_metric, _datapoint, _extra, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_call(unknown, from, state) do
+  def exometer_call(_unknown, _from, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_cast(unknown, state) do
+  def exometer_cast(_unknown, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_newentry(entry, state) do
+  def exometer_newentry(_entry, state) do
     {:ok, state}
   end
 
   @doc false
-  def exometer_setopts(metric, options, status, state) do
+  def exometer_setopts(_metric, _options, _status, state) do
     {:ok, state}
   end
 
