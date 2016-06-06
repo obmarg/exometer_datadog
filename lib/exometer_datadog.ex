@@ -12,11 +12,10 @@ defmodule ExometerDatadog do
 
   To pull in ExometerDatadog to your application, you should add it to your
   dependencies and list of applications in `mix.exs`, and then add an `api_key`
-  and `app_key` to your configuration.  For example:
+  to your configuration.  For example:
 
       config :exometer_datadog,
          api_key: 'abcd',
-         app_key: 'defg'
 
   You may want to put this in `prod.secret.exs` or similar to avoid checking the
   keys in to your repository.
@@ -30,7 +29,6 @@ defmodule ExometerDatadog do
   these config settings:
 
   - `api_key` is the datadog API key to send metrics with.
-  - `app_key` is the datadog app key to send metrics with.
   - `host_fn` is a `{module, function}` tuple that specifies a function to be
     called to determine the hostname to report to datadog. Defaults to
     `:inet.gethostname`
@@ -56,11 +54,10 @@ defmodule ExometerDatadog do
   from the environment on startup.
 
   For example, this would cause the api key & app key to be loaded from
-  DATADOG_API_KEY & DATADOG_APP_KEY:
+  DATADOG_API_KEY:
 
       config :exometer_datadog,
         api_key: {:system, "DATADOG_API_KEY"},
-        app_key: {:system, "DATADOG_APP_KEY"}
 
   """
   use Application
@@ -121,7 +118,6 @@ defmodule ExometerDatadog do
   can be overridden here.
 
   * `api_key` - The datadog API key to use.
-  * `app_key` - The datadog app specific API key to use.
   """
   def register_reporter(opts \\ []) do
     :ok = :exometer_report.add_reporter(Reporter, reporter_config(opts))
@@ -254,8 +250,7 @@ defmodule ExometerDatadog do
   defp reporter_config(opts \\ []) do
     :reporter_config
     |> get_env([])
-    |> Keyword.merge(api_key: get_env(:api_key),
-                     app_key: get_env(:app_key))
+    |> Keyword.put(:api_key, get_env(:api_key))
     |> Keyword.merge(opts)
     |> Enum.map(fn {k, v} -> {k, extract_env_vars(v)} end)
   end

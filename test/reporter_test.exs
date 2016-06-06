@@ -33,7 +33,7 @@ defmodule ReporterTest do
   test "metric payload is correct" do
     :timer.sleep(35)
     [{url, body, headers, _opts} | _] = TestHttpClient.requests
-    assert url == "https://app.datadoghq.com/api/v1/series?api_key=ab&application_key=cd"
+    assert url == "https://app.datadoghq.com/api/v1/series?api_key=ab"
     assert headers == [{"Content-Type", "application/json"}]
 
     data = Poison.decode!(body)
@@ -82,13 +82,7 @@ defmodule ReporterTest do
 
   test "error if api_key not set" do
     assert_raise RuntimeError, fn ->
-      Reporter.exometer_init(app_key: "ab")
-    end
-  end
-
-  test "error if app_key not set" do
-    assert_raise RuntimeError, fn ->
-      Reporter.exometer_init(api_key: "cd")
+      Reporter.exometer_init([])
     end
   end
 end

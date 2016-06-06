@@ -42,7 +42,6 @@ API.
      ```elixir
         config :exometer_datadog,
           api_key: 'abcd',
-          app_key: 'defg'
      ```
 
   4. You might optionally want to configure some of the other exometer_datadog

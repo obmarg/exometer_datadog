@@ -17,7 +17,6 @@ defmodule ExometerDatadog.Reporter do
   ExometerDatadog.Reporter accepts the following options:
 
   - `api_key` is the API key to send metrics with.
-  - `app_key` is the app key to send metrics with.
   - `host_fn` is a {module, function} tuple that will be called to determine the
     current hostname to pass to datadog.  Should return an {:ok, hostname} tuple.
   - `host` is the host to pass to datadog, this can be used to override
@@ -38,7 +37,6 @@ defmodule ExometerDatadog.Reporter do
     # Defines the options that can be passed to the reporter.
 
     defstruct [api_key: nil,
-               app_key: nil,
                host: nil,
                host_fn: nil,
                flush_period: 10_000,
@@ -47,7 +45,6 @@ defmodule ExometerDatadog.Reporter do
                reporter_stats: false]
 
     @type t :: %Options{api_key: String.t | nil,
-                        app_key: String.t | nil,
                         host: String.t | nil,
                         host_fn: {:atom, :atom} | nil,
                         flush_period: integer,
@@ -89,8 +86,8 @@ defmodule ExometerDatadog.Reporter do
   def exometer_init(opts) do
     opts = struct(Options, opts)
 
-    if opts.api_key == nil or opts.app_key == nil do
-      raise "Can't start DatadogReporter with missing api_key & app_key."
+    if opts.api_key == nil do
+      raise "Can't start DatadogReporter with missing api_key."
     end
 
     {host_fn_mod, host_fn_fun} =
@@ -184,8 +181,7 @@ defmodule ExometerDatadog.Reporter do
   defp send_to_datadog(opts, metrics) do
     payload = Poison.encode! %{series: metrics}
     headers = [{"Content-Type", "application/json"}]
-    query = URI.encode_query(api_key: opts.api_key,
-                             application_key: opts.app_key)
+    query = URI.encode_query(api_key: opts.api_key)
     url = "#{opts.datadog_url}/series?#{query}"
 
     opts.http_client.post!(url, payload, headers)

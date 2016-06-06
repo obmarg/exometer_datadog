@@ -5,7 +5,7 @@ defmodule ExometerDatadogFixtures do
 
   deffixture reporter(context) do
     [flush_period: 20, host: "testhost", http_client: TestHttpClient,
-     api_key: "ab", app_key: "cd"]
+     api_key: "ab"]
     |> Keyword.merge(context[:reporter_opts] || [])
     |> ExometerDatadog.register_reporter()
 
