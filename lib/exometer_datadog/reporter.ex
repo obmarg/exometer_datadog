@@ -41,16 +41,14 @@ defmodule ExometerDatadog.Reporter do
                host_fn: nil,
                flush_period: 10_000,
                datadog_url: "https://app.datadoghq.com/api/v1",
-               http_client: HTTPoison,
-               reporter_stats: false]
+               http_client: HTTPoison]
 
     @type t :: %Options{api_key: String.t | nil,
                         host: String.t | nil,
                         host_fn: {:atom, :atom} | nil,
                         flush_period: integer,
                         datadog_url: String.t,
-                        http_client: :atom,
-                        reporter_stats: boolean}
+                        http_client: :atom}
   end
 
   defmodule Point do
