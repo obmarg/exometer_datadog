@@ -42,6 +42,9 @@ defmodule ExometerDatadog do
     datadog.
   - `metric_prefix` can be provided as a list of atoms to prefix the VM metric names
     with.
+  - `global_tags` should be a list of tags to be added to every metric we
+    send to datadog. It should be a keyword list or a list of strings in datadog
+    tag format.
   - `reporter_config` can be used to provide config to the reporter. See
     `ExometerDatadog.Reporter` for more details on it's configuration.
 
@@ -250,7 +253,8 @@ defmodule ExometerDatadog do
   defp reporter_config(opts \\ []) do
     :reporter_config
     |> get_env([])
-    |> Keyword.put(:api_key, get_env(:api_key))
+    |> Keyword.merge(api_key: get_env(:api_key),
+                     global_tags: get_env(:global_tags) || [])
     |> Keyword.merge(opts)
     |> Enum.map(fn {k, v} -> {k, extract_env_vars(v)} end)
   end

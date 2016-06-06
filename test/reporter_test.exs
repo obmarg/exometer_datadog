@@ -76,6 +76,28 @@ defmodule ReporterTest do
     assert metric["host"] == "some_test_host"
   end
 
+  @tag fixtures: [:metric]
+  @tag reporter_opts: [global_tags: [a: :b, c: :d]]
+  test "can add some global tags as a keyword list" do
+    :timer.sleep(35)
+    [{url, body, headers, _opts} | _] = TestHttpClient.requests
+
+    data = Poison.decode!(body)
+    [metric] = data["series"]
+    assert metric["tags"] == ["a:b", "c:d"]
+  end
+
+  @tag fixtures: [:metric]
+  @tag reporter_opts: [global_tags: ["a:b", "c:d"]]
+  test "can add some global tags as strings" do
+    :timer.sleep(35)
+    [{url, body, headers, _opts} | _] = TestHttpClient.requests
+
+    data = Poison.decode!(body)
+    [metric] = data["series"]
+    assert metric["tags"] == ["a:b", "c:d"]
+  end
+
   def test_host_fn do
     {:ok, "some_test_host"}
   end

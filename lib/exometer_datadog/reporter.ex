@@ -24,6 +24,9 @@ defmodule ExometerDatadog.Reporter do
   - `flush_period` is the number of MS we will wait between sending metrics to
     datadog. Any metrics reported in this time will be stored and sent at the
     same time.
+  - `global_tags` should be a list of tags to be added to every metric we
+    send to datadog. It should be a keyword list or a list of strings in datadog
+    tag format.
 
   Many of these are also in the application config. ExometerDatadog will take
   care of passing them to the Reporter when it creates it.
@@ -41,25 +44,30 @@ defmodule ExometerDatadog.Reporter do
                host_fn: nil,
                flush_period: 10_000,
                datadog_url: "https://app.datadoghq.com/api/v1",
-               http_client: HTTPoison]
+               http_client: HTTPoison,
+               global_tags: []]
 
     @type t :: %Options{api_key: String.t | nil,
                         host: String.t | nil,
                         host_fn: {:atom, :atom} | nil,
                         flush_period: integer,
                         datadog_url: String.t,
-                        http_client: :atom}
+                        http_client: :atom,
+                        global_tags: [String.t]}
   end
 
   defmodule Point do
     @moduledoc false
     # A single point in a time series to send to datadog
 
-    defstruct [name: nil, value: nil, time: nil]
+    defstruct [name: nil, value: nil, time: nil, tags: []]
 
-    @type t :: %Point{name: String.t, value: number, time: number}
-
-    def name(%Point{name: name}), do: name
+    @type t :: %Point{
+      name: String.t,
+      value: number,
+      time: number,
+      tags: [String.t]
+    }
   end
 
   defmodule Metric do
@@ -67,13 +75,14 @@ defmodule ExometerDatadog.Reporter do
     # A single metric batch to send to datadog
 
     @derive [Poison.Encoder]
-    defstruct [metric: nil, points: [], type: "gauge", host: nil]
+    defstruct [metric: nil, points: [], type: "gauge", host: nil, tags: []]
 
     @type t :: %Metric{
       metric: String.t,
       points: [{integer, number}],
       type: String.t,
-      host: String.t | nil
+      host: String.t | nil,
+      tags: [String.t]
     }
   end
 
@@ -82,6 +91,7 @@ defmodule ExometerDatadog.Reporter do
   @doc false
   @spec exometer_init(Keyword.t) :: {:ok, state}
   def exometer_init(opts) do
+    opts = Keyword.update(opts, :global_tags, [], &tags_to_strings/1)
     opts = struct(Options, opts)
 
     if opts.api_key == nil do
@@ -121,11 +131,13 @@ defmodule ExometerDatadog.Reporter do
 
   @doc false
   def exometer_info(:flush, {opts, points}) do
-    metrics = for {name, points} <- Enum.group_by(points, &Point.name/1) do
+    metrics = for {{name, tags}, points} <- group_points(points) do
       %Metric{metric: name,
               points: (for p <- points, do: [p.time, p.value]),
-              host: opts.host}
+              host: opts.host,
+              tags: tags ++ opts.global_tags}
     end
+
     send_to_datadog(opts, metrics)
     start_flush_timer(opts)
     {:ok, {opts, []}}
@@ -183,5 +195,20 @@ defmodule ExometerDatadog.Reporter do
     url = "#{opts.datadog_url}/series?#{query}"
 
     opts.http_client.post!(url, payload, headers)
+  end
+
+  @spec group_points([Point.t]) :: %{{String.t, [String.t]} => Point.t}
+  defp group_points(points) do
+    Enum.group_by(points, fn %{name: name, tags: tags} -> {name, tags} end)
+  end
+
+  @spec tags_to_strings(Keyword.t | [String.t]) :: [String.t]
+  defp tags_to_strings([]), do: []
+  defp tags_to_strings([str | rest]) when is_binary(str) do
+    [str | tags_to_strings(rest)]
+  end
+
+  defp tags_to_strings([{key, val} | rest]) do
+    ["#{key}:#{val}" | tags_to_strings(rest)]
   end
 end
