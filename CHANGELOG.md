@@ -1,3 +1,8 @@
+### v0.4.5 (22/6/16)
+
+- Relax httpoison & exometer_core version requirements.
+- HTTPoison is now a required dependency.
+
 ### v0.4.4 (22/6/16)
 
 - Renamed some un-used variables to silence compiler warnings.
