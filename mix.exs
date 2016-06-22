@@ -30,9 +30,9 @@ defmodule ExometerDatadog.Mixfile do
   end
 
   defp deps do
-    [{:exometer_core, "~> 1.4.0"},
+    [{:exometer_core, "~> 1.4"},
      {:poison, "~> 2.0"},
-     {:httpoison, "~> 0.8.0"},
+     {:httpoison, "~> 0.8"},
 
      {:ex_unit_fixtures, "~> 0.3.0", only: :test},
 
