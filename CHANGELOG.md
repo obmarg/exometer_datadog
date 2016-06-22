@@ -1,7 +1,11 @@
 ### v0.4.4 (22/6/16)
 
+- Renamed some un-used variables to silence compiler warnings.
+- Remove app_key from config, because it's not really needed.
+- Removed an un-used option from our reporter (`reporter_stats`)
 - Changed our poison dependency to "~> 2.0" instead of "~> 2.0.0", to avoid
   clashes with phoenix, which requires "~> 2.0".
+- Tested with Elixir 1.3.0-rc.0
 
 ### v0.4.3 (30/5/16)
 
