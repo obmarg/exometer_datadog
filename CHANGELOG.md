@@ -1,3 +1,8 @@
+### v0.4.4 (22/6/16)
+
+- Changed our poison dependency to "~> 2.0" instead of "~> 2.0.0", to avoid
+  clashes with phoenix, which requires "~> 2.0".
+
 ### v0.4.3 (30/5/16)
 
 - Updated deps. Now pulling exometer_core from hex instead of using the
